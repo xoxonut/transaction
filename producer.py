@@ -9,21 +9,20 @@ class p:
             'bootstrap.servers': 'localhost:9092',
             'client.id': socket.gethostname()
         })
-        self.__names = set(['Alice','Bob','Charlie','David','Eve',
+        self.__names = ['Alice','Bob','Charlie','David','Eve',
                         'Frank','Grace','Hannah','Ivan','Judy',
                         'Kevin','Linda','Mike','Nancy','Oscar',
                         'Pam','Quinn','Ralph','Sara','Tom','Uma',
-                        'Victor','Wendy','Xavier','Yvonne','Zach'])
+                        'Victor','Wendy','Xavier','Yvonne','Zach']
    
     
     def loop_produce(self,t:int = 10):
         
-        def make_transaction(self):
-            giver = random.choice(self.__names)
-            reciver = random.choice(self.__names-set([giver]))
+        def make_transaction():
+            giver,reciver = random.sample(self.__names,2)
             amount = random.randint(1,100)
             transcation = {'giver':giver,'reciver':reciver,'amount':amount}
-            return json.dump(transcation)
+            return json.dumps(transcation).encode('utf-8')
         
         def acked(err,msg):
             if err is not None:
@@ -40,5 +39,5 @@ class p:
     
 if __name__ == '__main__':
     p = p()
-    p.loop_produce()
+    p.loop_produce(1000)
     print('done')

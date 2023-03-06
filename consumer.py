@@ -1,24 +1,8 @@
 from confluent_kafka import Consumer
 import random
-import asyncio
+import json 
+import threading
 
-conf = {
-    'bootstrap.servers': 'localhost:9092',
-    'group.id': 'foo',   
-    'auto.offset.reset': 'earliest'
-}
-consumer = Consumer(conf)
-consumer.subscribe(['quickstart-events'])
-# while True:
-#     msg = consumer.poll(1.0)
-
-#     if msg is None:
-#         continue
-#     if msg.error():
-#         print("Consumer error: {}".format(msg.error()))
-#         continue
-
-#     print('Received message: {}'.format(msg.value().decode('utf-8')))
 
 class c:
     
@@ -26,7 +10,8 @@ class c:
         
         self.__consumer = Consumer({
             'bootstrap.servers': 'localhost:9092',
-            'group.id': None,
+            'group.id': 'foo',
+            'auto.offset.reset': 'earliest'
         })
         
         self.__consumer.subscribe(['quickstart-events'])
@@ -39,5 +24,19 @@ class c:
         
         self.__banks = {i:random.randint(1,1000) for i in names}
     
-    async def loop_consume(self):
-        
+    def loop_consume(self):
+        while True :
+            msg = self.__consumer.poll(1.0)
+            if msg is None:
+                print('no message')
+                continue
+            if msg.error():
+                print("Consumer error: {}".format(msg.error()))
+            else :
+                print('Received message: {}'.format(msg.value().decode('utf-8')))
+                data = json.loads(msg.value().decode('utf-8'))
+                print(data)
+
+if __name__ == '__main__':
+    c = c()
+    c.loop_consume()

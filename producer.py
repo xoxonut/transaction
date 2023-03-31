@@ -3,6 +3,7 @@ import socket
 import json
 import random
 from time import process_time 
+from ksql import KSQLAPI
 
 class p:
     def __init__(self):
@@ -12,20 +13,14 @@ class p:
             'queue.buffering.max.kbytes': 2000000,
             'queue.buffering.max.messages': 1000000
         })
-        self.__names = ['Alice','Bob','Charlie','David','Eve',
-                        'Frank','Grace','Hannah','Ivan','Judy',
-                        'Kevin','Linda','Mike','Nancy','Oscar',
-                        'Pam','Quinn','Ralph','Sara','Tom','Uma',
-                        'Victor','Wendy','Xavier','Yvonne','Zach']
+        with open('transaction.json','r') as f:
+            self.__transactions = json.load(f)['transaction']
+        
    
     
-    def loop_produce(self,t:int = 10):
+    def loop_produce(self):
         
-        def make_transaction():
-            giver,receiver = random.sample(self.__names,2)
-            amount = random.randint(1,100)
-            transaction = {'giver':giver,'receiver':receiver,'amount':amount}
-            return json.dumps(transaction).encode('utf-8')
+
         
         def acked(err,msg):
             if err is not None:
@@ -35,14 +30,26 @@ class p:
                 # print("Message produced: {0}".format(msg.value()))
         
         
-        for i in range(t):
-            self.__producer.produce(topic='quickstart-events',value=make_transaction(),callback=acked)
+        for i in self.__transactions.values():
             self.__producer.poll(0)
+            self.__producer.produce(topic='transaction',key=f"{i['giver']}",value=json.dumps({"receiver":i["receiver"],"amount":i["amount"]}).encode('utf-8'),callback=acked)
         self.__producer.flush()
         print('flushed')
+        
+    # def insert_to_bank(self):
+    #     def acked(err,msg):
+    #         if err is not None:
+    #             print("Failed to deliver message: {0}: {1}".format(msg.value(),err.str()))
+    #         else:
+    #             pass
+    #             print("Message produced: {0}".format(msg.value()))
+    #     for i,name in enumerate(self.__names):
+    #         self.__producer.poll(0)
+    #         self.__producer.produce(topic='balance',key=name,value=json.dumps({'uid':name,'amount':1}).encode('utf-8'),callback=acked)
+    #     self.__producer.flush()
     
 if __name__ == '__main__':
     p = p()
     s = process_time()
-    p.loop_produce(10000000)
+    p.loop_produce()
     print(process_time()-s)

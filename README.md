@@ -1,30 +1,24 @@
 # transaction
 ![](https://github.com/xoxonut/transaction/blob/main/transaction.drawio.png)
 ## one consumer
-```
-Consumer error: KafkaError{code=_PARTITION_EOF,val=-191,str="Fetch from broker 0 reached end of partition at offset 52189 (HighwaterMark 52189)"}
-```
-269.1394375ms
-s:613 f:91576
 
-## 2 consumer
+285.930852
+1737 98263
+
+## two consumer
 sometimes time outed
 ### 1
 
-#### first
-time out
-9681 10084
-#### sec
-```
-Consumer error: KafkaError{code=_PARTITION_EOF,val=-191,str="Fetch from broker 0 reached end of partition at offset 47811 (HighwaterMark 47811)"}
-```
-92.4908152
-9161 8650
+268.860491
+31864 15947
 
 ### 2
-```
-Consumer error: KafkaError{code=_PARTITION_EOF,val=-191,str="Fetch from broker 0 reached end of partition at offset 47811 (HighwaterMark 47811)"}
-```
 
-262.9635215
-20276 42148
+283.20981489999997
+33383 18806
+
+# Next week 
+deal with transaction api :
+* kafka python have transaction api for sure
+    * find if ksql curd has transaction api or not
+* where is the begin of transaction?

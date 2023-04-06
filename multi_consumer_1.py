@@ -11,7 +11,7 @@ class c:
         self.f=0
         self.__consumer = Consumer({
             'bootstrap.servers': 'localhost:9092',
-            'group.id': f'123asd',
+            'group.id': f'hello',
             'auto.offset.reset': 'earliest',
             'enable.partition.eof': True
         })

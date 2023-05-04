@@ -1,0 +1,20 @@
+syntax = "proto3";
+option go_package = "./payment.proto";
+package payment;
+
+service PaymentService {
+  rpc TransferPayment(TransferPaymentRequest) returns (TransferPaymentResponse) {}
+}
+
+
+message TransferPaymentRequest {
+  int64 from = 1;
+  int64 to = 2;
+  int64 amount = 3;
+  int64 paymentId = 4;
+}
+
+message TransferPaymentResponse{
+    int64 state = 1;
+    int64 paymentId = 2;
+}

@@ -22,3 +22,13 @@ deal with transaction api :
 * kafka python have transaction api for sure
     * find if ksql curd has transaction api or not
 * where is the begin of transaction?
+## GO
+- 1sec sleep and 100 rps
+    -   1400 payments timeout 1m0.000884419s
+- 2sec sleep and 100rps
+    - 1200 payments timeout 1m0.509036772s
+- 1sec sleep and 10rps
+    - 460 payments timeout 1m0.000289041s
+
+##
+好像是我grpc沒弄好 client沒有弄到async

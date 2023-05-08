@@ -32,3 +32,6 @@ deal with transaction api :
 
 ##
 好像是我grpc沒弄好 client沒有弄到async
+
+client 的ctx要重弄 -> 建立新的rpc連線
+https://stackoverflow.com/questions/31800692/multiple-http-requests-gives-cant-assign-requested-address-unless-sped-up

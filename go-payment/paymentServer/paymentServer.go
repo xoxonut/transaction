@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net"
-	"time"
 
 	pb "go-payment"
 
@@ -17,13 +16,9 @@ type server struct {
 	pb.UnimplementedPaymentServiceServer
 }
 
+var kcl ksqldb.KsqldbClient
+
 func transfer2Kafka(from int, to int, amount int) error {
-	var options = knet.Options{
-		BaseUrl:   "http://localhost:8088",
-		AllowHTTP: true,
-	}
-	kcl, err := ksqldb.NewClientWithOptions(options)
-	defer kcl.Close()
 	stmt, err := ksqldb.QueryBuilder("INSERT INTO BALANCE_STREAM VALUES (?, ?);", from, -amount)
 	_, err = kcl.Execute(ksqldb.ExecOptions{KSql: *stmt})
 	stmt, err = ksqldb.QueryBuilder("INSERT INTO BALANCE_STREAM VALUES (?, ?);", to, amount)
@@ -31,16 +26,19 @@ func transfer2Kafka(from int, to int, amount int) error {
 	return err
 }
 func (s *server) TransferPayment(ctx context.Context, in *pb.TransferPaymentRequest) (*pb.TransferPaymentResponse, error) {
-	time.Sleep(time.Second * 1)
 	// fmt.Println(in.GetFrom(), in.GetTo(), in.GetAmount())
-	// err := transfer2Kafka(int(in.GetFrom()), int(in.GetTo()), int(in.GetAmount()))
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
+	err := transfer2Kafka(int(in.GetFrom()), int(in.GetTo()), int(in.GetAmount()))
+	if err != nil {
+		fmt.Println(err)
+	}
 	return &pb.TransferPaymentResponse{State: 0, PaymentId: in.GetPaymentId()}, nil
 }
 func main() {
-
+	var options = knet.Options{
+		BaseUrl:   "http://localhost:8088",
+		AllowHTTP: true,
+	}
+	kcl, _ = ksqldb.NewClientWithOptions(options)
 	lis, err := net.Listen("tcp", ":50051")
 	if err != nil {
 		fmt.Println(err)

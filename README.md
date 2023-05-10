@@ -9,6 +9,15 @@
 - 100 rps : 61tps
 - 1000 rps : 64tps
 - 10000 rps : 63tps
+## a group of ksql connections (10000 payments 1000 rps, random giver and receiver)
+- 2 connections : 54tps
+- 10 connections : 61tps
+- 100 connections : 56tps
+## one payment one ksql connections (10000 payments 1000 rps, random giver and receiver)
+- with connections close : 61tps
+- without connections close : 62tps
+## sync client and create ksql connection per payment in server (10000 payments 1000 rps, random giver and receiver)
+- 34tps
 
 # transaction
 ![](https://github.com/xoxonut/transaction/blob/main/transaction.drawio.png)

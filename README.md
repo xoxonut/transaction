@@ -1,3 +1,15 @@
+# Go test 
+## fixed giver and receiver
+### 100000 payments
+- 100 rps : 64tps
+- 1000 rps : 64tps
+### 50000 payments
+- 10000 rps : 63tps
+## random from 0 to 1000000 (500000 payments)
+- 100 rps : 61tps
+- 1000 rps : 64tps
+- 10000 rps : 63tps
+
 # transaction
 ![](https://github.com/xoxonut/transaction/blob/main/transaction.drawio.png)
 ## one consumer

@@ -13,6 +13,8 @@ import (
 )
 
 func main() {
+	total := 50000
+	rps := 10000
 	conn, err := grpc.Dial("localhost:50051", grpc.WithInsecure())
 	if err != nil {
 		fmt.Println(err, 123)
@@ -22,22 +24,22 @@ func main() {
 	start := time.Now()
 	fmt.Println(start)
 	wg := &sync.WaitGroup{}
-	wg.Add(5000)
-	for i := 0; i < 5; i++ {
-		for j := 0; j < 1000; j++ {
-			go func(i int, j int, wg *sync.WaitGroup) {
-				ctx, cancel := context.WithTimeout(context.Background(), time.Second*60)
+	wg.Add(total)
+	t := total / rps
+	for i := 0; i < t; i++ {
+		for j := 0; j < rps; j++ {
+			go func(i int, j int, wg *sync.WaitGroup, t int) {
+				ctx, cancel := context.WithTimeout(context.Background(), time.Second*18000)
 				defer cancel()
 				defer wg.Done()
-				// fmt.Print(ctx)
-				r, err := c.TransferPayment(ctx, &pb.TransferPaymentRequest{From: rand.Int63n(100000), To: rand.Int63n(100000), Amount: 1, PaymentId: int64(i*1000 + j)})
+				r, err := c.TransferPayment(ctx, &pb.TransferPaymentRequest{From: rand.Int63n(1000000), To: rand.Int63n(1000000), Amount: 1, PaymentId: int64(i*t + j)})
 				if err != nil {
 					fmt.Println(err)
 					fmt.Println(i, time.Since(start))
 					os.Exit(1)
 				}
 				fmt.Println(r.GetState(), r.GetPaymentId())
-			}(i, j, wg)
+			}(i, j, wg, rps)
 		}
 		time.Sleep(time.Second * 1)
 	}

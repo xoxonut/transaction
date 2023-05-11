@@ -5,7 +5,7 @@
 - 1000 rps : 64tps
 ### 50000 payments
 - 10000 rps : 63tps
-## random from 0 to 1000000 (500000 payments)
+## random from 0 to 1000000 (50000 payments)
 - 100 rps : 61tps
 - 1000 rps : 64tps
 - 10000 rps : 63tps

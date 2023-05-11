@@ -18,6 +18,14 @@
 - without connections close : 62tps
 ## sync client and create ksql connection per payment in server (10000 payments 1000 rps, random giver and receiver)
 - 34tps
+##  without grpc one connection and sync 10000 payments
+- python : 83tps
+    - 之前比較快是應為只計算user mode kernel的時間 
+    - 可能沒有等回傳值，等一段時間就跳掉
+```
+[2023-05-12 00:32:38,727] INFO stream-thread [_confluent-ksql-default_query_CTAS_BANK_5-d9bd2938-cfa3-4d79-8e40-65f436377c2b-StreamThread-1] Processed 8948 total records, ran 0 punctuators, and committed 57 total tasks since the last update (org.apache.kafka.streams.processor.internals.StreamThread:842)
+```
+- go : 37.5 tps (async and sync are the same)
 
 # transaction
 ![](https://github.com/xoxonut/transaction/blob/main/transaction.drawio.png)

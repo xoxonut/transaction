@@ -1,8 +1,9 @@
 from confluent_kafka import Consumer
 import json 
-from time import process_time
+from time import process_time,time
 from ksql import KSQLAPI
 import ast
+import random
 
 class c:
     
@@ -36,15 +37,15 @@ class c:
                 self.execute_transaction(msg)
         return 
                 
-    def execute_transaction(self,msg):
-        data = json.loads(msg.value().decode('utf-8'))
-        k =int(msg.key().decode('utf-8'),10)
-        if data['amount'] > self.get_balance(k):
-            self.f+=1
-            return
-        self.s+=1
-        self.insert_balance(k,-data['amount'])
-        self.insert_balance(data['receiver'],data['amount'])
+    def execute_transaction(self,msg=None):
+        # data = json.loads(msg.value().decode('utf-8'))
+        # k =int(msg.key().decode('utf-8'),10)
+        # if data['amount'] > self.get_balance(k):
+        #     self.f+=1
+        #     return
+        
+        self.insert_balance(random.randint(1,1000000),1)
+        self.insert_balance(random.randint(1,1000000),1)
         return
     
     def get_balance(self,uid):
@@ -65,9 +66,12 @@ class c:
 if __name__ == '__main__':
     c = c()
     try:
+        a=time()
         s = process_time()
-        c.loop_consume()
+        for i in range(10000):
+            c.execute_transaction()
         print(process_time()-s)
+        print(time()-a)
     finally:
         print(c.s,c.f)
         c.cl()

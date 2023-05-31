@@ -18,12 +18,19 @@ var delivery_chan = make(chan kafka.Event, 10000)
 var topic = "balance"
 
 func sendPayment(from int, to int, amount int) {
-	err = p.Produce(&kafka.Message{
+	p.Produce(&kafka.Message{
 		TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
 		Key:            []byte(strconv.Itoa(from)),
-		Value:          []byte(`{to:` + strconv.Itoa(to) + `,amount:` + strconv.Itoa(amount) + `}`)},
+		Value:          []byte(strconv.Itoa(-amount))},
 		delivery_chan,
 	)
+	p.Produce(&kafka.Message{
+		TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
+		Key:            []byte(strconv.Itoa(to)),
+		Value:          []byte(strconv.Itoa(amount))},
+		delivery_chan,
+	)
+
 	return
 }
 
@@ -39,14 +46,11 @@ func (s *server) TransferPayment(ctx context.Context, in *pb.TransferPaymentRequ
 func main() {
 	go func() {
 		fmt.Println("start")
-		for e := range p.Events() {
+		for e := range delivery_chan {
 			switch ev := e.(type) {
 			case *kafka.Message:
 				if ev.TopicPartition.Error != nil {
 					fmt.Printf("Failed to deliver message: %v\n", ev.TopicPartition)
-				} else {
-					fmt.Printf("Successfully produced record to topic %s partition [%d] @ offset %v\n",
-						*ev.TopicPartition.Topic, ev.TopicPartition.Partition, ev.TopicPartition.Offset)
 				}
 			}
 		}

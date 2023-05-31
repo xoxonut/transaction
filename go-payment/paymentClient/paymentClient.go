@@ -13,8 +13,8 @@ import (
 )
 
 func main() {
-	total := 10000
-	rps := 1000
+	total := 100000
+	rps := 100000
 	conn, err := grpc.Dial("localhost:50051", grpc.WithInsecure())
 	if err != nil {
 		fmt.Println(err, 123)
